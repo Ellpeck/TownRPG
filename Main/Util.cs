@@ -107,6 +107,13 @@ namespace TownRPG.Main {
             return splitText.ToString();
         }
 
+        public static void DrawCenteredString(this SpriteBatch batch, SpriteFont spriteFont, string text, Vector2 position, bool hor, bool vert, Color color, float scale) {
+            var data = spriteFont.MeasureString(text) * scale;
+            batch.DrawString(spriteFont, text,
+                position - new Vector2(hor ? data.X / 2 : 0, vert ? data.Y / 2 : 0),
+                color, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+        }
+
         public static void DrawDynamicArea(this SpriteBatch batch, Rectangle destination, Texture2D texture, Rectangle textureArea, Color color) {
             //Draw four corner parts first
             batch.Draw(texture,

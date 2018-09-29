@@ -42,5 +42,18 @@ namespace TownRPG.Interfaces {
         public virtual void OnClose() {
         }
 
+        public bool HandleMouse(Point pos, int clickType) {
+            if (this.OnMouse(pos, clickType)) {
+                return true;
+            }
+
+            foreach (var component in this.Components) {
+                if (component.OnMouse(pos, clickType)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }

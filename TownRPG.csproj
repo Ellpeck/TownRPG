@@ -68,6 +68,7 @@
     <Compile Include="Interfaces\Interface.cs" />
     <Compile Include="Interfaces\InterfaceComponent.cs" />
     <Compile Include="Interfaces\MessageBox.cs" />
+    <Compile Include="Interfaces\Overlay.cs" />
     <Compile Include="Main\Camera.cs" />
     <Compile Include="Main\Cutscene.cs" />
     <Compile Include="Main\GameImpl.cs" />

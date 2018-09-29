@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -28,11 +29,13 @@ namespace TownRPG.Main {
         private Point lastMousePos;
         private int lastClickType;
 
-        public Dictionary<string, Map> Maps = new Dictionary<string, Map>();
+        public readonly Dictionary<string, Map> Maps = new Dictionary<string, Map>();
         public Player Player;
         public Camera Camera;
 
-        public Color DaylightModifier = new Color(0, 0, 0);
+        public Color DaylightModifier = Color.Black;
+        public float LightsModifier;
+        public VirtualTime CurrentTime = new VirtualTime();
 
         public Map CurrentMap {
             get { return this.Player.Map; }
@@ -50,6 +53,7 @@ namespace TownRPG.Main {
         private float fadePercentage;
         private OnFaded fadeCallback;
 
+        public Interface Overlay { get; private set; }
         public Interface CurrentInterface { get; private set; }
         public Cutscene CurrentCutscene;
 
@@ -69,6 +73,7 @@ namespace TownRPG.Main {
             if (this.CurrentInterface != null) {
                 this.CurrentInterface.InitPositions(this.GraphicsDevice.Viewport);
             }
+            this.Overlay.InitPositions(this.GraphicsDevice.Viewport);
             this.Camera.FixPosition();
             var view = this.GraphicsDevice.Viewport;
             this.Lightmap = new RenderTarget2D(this.GraphicsDevice, view.Width, view.Height);
@@ -87,8 +92,9 @@ namespace TownRPG.Main {
             this.Player = new Player(this.Maps["Town1"], new Vector2(200, 400));
             this.CurrentMap.AddObject(this.Player);
 
-            this.Camera = new Camera(this.Player) {Scale = 4F};
+            this.Camera = new Camera(this.Player) {Scale = 4.5F};
             this.Camera.FixPosition();
+            this.Overlay = new Overlay();
         }
 
         protected override void Update(GameTime gameTime) {
@@ -97,10 +103,47 @@ namespace TownRPG.Main {
                     map.Update(gameTime);
                 }
 
-                this.MapRenderer.Update(this.CurrentMap.Tiles, gameTime);
+                if (this.CurrentMap != null) {
+                    this.CurrentTime.Update(gameTime);
+
+                    var nightColor = new Color(220, 220, 150);
+                    const int eveningTime = 18;
+                    const int nightTime = 23;
+                    const int morningTime = 5;
+                    const int dayTime = 10;
+
+                    var hours = this.CurrentTime.TotalMinutes / 60 % 24;
+                    if (hours >= nightTime || hours < morningTime) {
+                        // night
+                        this.LightsModifier = 1;
+                        this.DaylightModifier = nightColor;
+                    } else if (hours >= eveningTime) {
+                        // evening
+                        this.LightsModifier = (hours - eveningTime) / (nightTime - eveningTime);
+                        this.DaylightModifier = nightColor * this.LightsModifier;
+                    } else if (hours >= dayTime) {
+                        // day
+                        this.LightsModifier = 0;
+                        this.DaylightModifier = Color.Black;
+                    } else if (hours >= morningTime) {
+                        // morning
+                        var rednessMod = (hours - morningTime) / (dayTime - morningTime);
+                        this.LightsModifier = 1 - rednessMod;
+                        this.DaylightModifier = new Color(
+                                                    nightColor.R - (int) (30 * rednessMod),
+                                                    nightColor.G - (int) (20 * rednessMod),
+                                                    nightColor.B + (int) (100 * rednessMod))
+                                                * this.LightsModifier;
+                    }
+
+                    this.MapRenderer.Update(this.CurrentMap.Tiles, gameTime);
+                }
             }
 
             this.Camera.Update();
+            if (this.CurrentCutscene == null) {
+                this.Overlay.Update(gameTime);
+            }
             if (this.CurrentInterface != null) {
                 this.CurrentInterface.Update(gameTime);
             }
@@ -134,18 +177,16 @@ namespace TownRPG.Main {
             }
 
             if (this.CurrentInterface != null) {
-                if (!this.CurrentInterface.OnMouse(state.Position, type)) {
-                    foreach (var component in this.CurrentInterface.Components) {
-                        if (component.OnMouse(state.Position, type)) {
-                            break;
-                        }
-                    }
-                }
+                this.CurrentInterface.OnMouse(state.Position, type);
             } else {
+                if (this.CurrentCutscene == null && this.Overlay.OnMouse(state.Position, type)) {
+                    return;
+                }
+
                 var world = this.Camera.ToWorldPos(state.Position.ToVector2());
                 foreach (var obj in this.CurrentMap.AllObjects) {
                     if (obj.OnMouse(world, type)) {
-                        break;
+                        return;
                     }
                 }
             }
@@ -159,14 +200,16 @@ namespace TownRPG.Main {
                         this.GraphicsDevice.Clear(this.DaylightModifier);
                         this.SpriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
-                        foreach (var light in this.CurrentMap.LightSources) {
-                            Vector2 size = light.Size * this.Camera.Scale;
-                            this.SpriteBatch.Draw(
-                                light.Texture,
-                                new Rectangle(
-                                    (this.Camera.ToCameraPos(light.Position) - size / 2).ToPoint(),
-                                    size.ToPoint()),
-                                light.ColorModifier);
+                        if (this.LightsModifier > 0) {
+                            foreach (var light in this.CurrentMap.LightSources) {
+                                Vector2 size = light.Size * this.Camera.Scale;
+                                this.SpriteBatch.Draw(
+                                    light.Texture,
+                                    new Rectangle(
+                                        (this.Camera.ToCameraPos(light.Position) - size / 2).ToPoint(),
+                                        size.ToPoint()),
+                                    light.ColorModifier * this.LightsModifier);
+                            }
                         }
 
                         this.SpriteBatch.End();
@@ -189,13 +232,16 @@ namespace TownRPG.Main {
                     this.GraphicsDevice.Clear(Color.Black);
                 }
 
-                if (this.CurrentInterface != null) {
-                    this.SpriteBatch.Begin(
-                        SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null,
-                        Matrix.CreateScale(Interface.Scale));
-                    this.CurrentInterface.Draw(this.SpriteBatch);
-                    this.SpriteBatch.End();
+                this.SpriteBatch.Begin(
+                    SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null,
+                    Matrix.CreateScale(Interface.Scale));
+                if (this.CurrentCutscene == null) {
+                    this.Overlay.Draw(this.SpriteBatch);
                 }
+                if (this.CurrentInterface != null) {
+                    this.CurrentInterface.Draw(this.SpriteBatch);
+                }
+                this.SpriteBatch.End();
 
                 base.Draw(gameTime);
             }
@@ -244,6 +290,43 @@ namespace TownRPG.Main {
 
         public static T LoadContent<T>(string name) {
             return Instance.Content.Load<T>(name);
+        }
+
+    }
+
+    public class VirtualTime {
+
+        private const float SecondsPerMinute = 0.25F;
+        private float minuteCounter;
+
+        public float TotalMinutes;
+        public int Minute;
+        public int Hour;
+        public int Day;
+
+        public void Update(GameTime time) {
+            var passedMinutes = (float) time.ElapsedGameTime.TotalSeconds / SecondsPerMinute;
+            this.TotalMinutes += passedMinutes;
+            this.minuteCounter += passedMinutes;
+            while (this.minuteCounter >= 1) {
+                this.minuteCounter -= 1;
+                this.Minute++;
+                if (this.Minute >= 60) {
+                    this.Minute = 0;
+                    this.Hour++;
+                    if (this.Hour >= 24) {
+                        this.Hour = 0;
+                        this.Day++;
+                    }
+                }
+            }
+        }
+
+        public string TimeToString() {
+            var amPm = this.Hour >= 12 ? " pm" : " am";
+            var hour = this.Hour == 0 ? 12 : this.Hour;
+            var minute = (this.Minute / 10 * 10).ToString("D2");
+            return hour + ":" + minute + amPm;
         }
 
     }

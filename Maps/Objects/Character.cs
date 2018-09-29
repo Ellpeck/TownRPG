@@ -49,7 +49,7 @@ namespace TownRPG.Maps.Objects {
             return false;
         }
 
-        public bool PathfindTo(Point pos, OnPathEnded callback, float speed = 0.3F) {
+        public bool PathfindTo(Point pos, OnPathEnded callback = null, float speed = 0.3F) {
             this.path = Util.FindPath(this.Map, this, (this.Position / this.Map.Scale).ToPoint(), pos, 10000);
             this.onPathEnded = callback;
             this.WalkSpeed = speed;
