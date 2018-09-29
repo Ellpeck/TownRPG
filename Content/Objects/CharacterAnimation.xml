@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+    <Asset Type="System.Collections.Generic.Dictionary[System.String, Microsoft.Xna.Framework.Rectangle]">
+        <Item>
+            <Key>StandingDown</Key>
+            <Value>0 0 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Down1</Key>
+            <Value>16 0 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Down2</Key>
+            <Value>32 0 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Down3</Key>
+            <Value>48 0 16 32</Value>
+        </Item>
+        
+        <Item>
+            <Key>StandingUp</Key>
+            <Value>0 32 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Up1</Key>
+            <Value>16 32 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Up2</Key>
+            <Value>32 32 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Up3</Key>
+            <Value>48 32 16 32</Value>
+        </Item>
+
+        <Item>
+            <Key>StandingLeft</Key>
+            <Value>0 64 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Left1</Key>
+            <Value>16 64 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Left2</Key>
+            <Value>32 64 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Left3</Key>
+            <Value>48 64 16 32</Value>
+        </Item>
+
+        <Item>
+            <Key>StandingRight</Key>
+            <Value>0 96 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Right1</Key>
+            <Value>16 96 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Right2</Key>
+            <Value>32 96 16 32</Value>
+        </Item>
+        <Item>
+            <Key>Right3</Key>
+            <Value>48 96 16 32</Value>
+        </Item>
+    </Asset>
+</XnaContent>
