@@ -167,6 +167,12 @@ namespace TownRPG.Maps.Objects {
             this.UpdateAnimation();
         }
 
+        public void StopAndFace(int direction) {
+            this.StopMoving();
+            this.Direction = direction;
+            this.UpdateAnimation();
+        }
+
         public delegate void OnPathEnded();
 
     }

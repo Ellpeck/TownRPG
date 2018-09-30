@@ -96,6 +96,15 @@ namespace TownRPG.Main {
             this.Camera = new Camera(this.Player) {Scale = 4.5F};
             this.Camera.FixPosition();
             this.Overlay = new Overlay();
+
+            var tess = new Character("Tess", this.Maps["Town1"], new Vector2(22.5F, 30.5F) * this.Maps["Town1"].Scale);
+            tess.DialogOptions.Enqueue(new DialogMessage("Hey! I'm Tess. How are you?"));
+            tess.DialogOptions.Enqueue(new DialogMessage("Did you know you can go into the blue house south-west of town?"));
+            tess.PathfindTo(new Point(7, 42), () => {
+                tess.StopAndFace(2);
+                tess.DialogOptions.Enqueue(new DialogMessage("I really enjoy the river. It's nice and calm."));
+            });
+            tess.Map.AddObject(tess);
         }
 
         protected override void Update(GameTime gameTime) {
@@ -305,29 +314,23 @@ namespace TownRPG.Main {
     public class VirtualTime {
 
         private const float SecondsPerMinute = 0.25F;
-        private float minuteCounter;
 
-        public float TotalMinutes;
-        public int Minute;
-        public int Hour;
-        public int Day;
+        public float TotalMinutes = 60 * 7;
+
+        public int Minute {
+            get { return (int) this.TotalMinutes % 60; }
+        }
+
+        public int Hour {
+            get { return (int) this.TotalMinutes / 60; }
+        }
+
+        public int Day {
+            get { return (int) this.TotalMinutes / 60 / 24; }
+        }
 
         public void Update(GameTime time) {
-            var passedMinutes = (float) time.ElapsedGameTime.TotalSeconds / SecondsPerMinute;
-            this.TotalMinutes += passedMinutes;
-            this.minuteCounter += passedMinutes;
-            while (this.minuteCounter >= 1) {
-                this.minuteCounter -= 1;
-                this.Minute++;
-                if (this.Minute >= 60) {
-                    this.Minute = 0;
-                    this.Hour++;
-                    if (this.Hour >= 24) {
-                        this.Hour = 0;
-                        this.Day++;
-                    }
-                }
-            }
+            this.TotalMinutes += (float) time.ElapsedGameTime.TotalSeconds / SecondsPerMinute;
         }
 
         public string TimeToString() {
