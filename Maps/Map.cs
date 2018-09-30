@@ -1,13 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Tiled;
-using MonoGame.Extended.Tiled.Graphics;
 using TownRPG.Main;
 using TownRPG.Maps.Objects;
 
@@ -22,6 +18,9 @@ namespace TownRPG.Maps {
         public readonly Dictionary<Vector2, MapObject> StaticObjects = new Dictionary<Vector2, MapObject>();
         public readonly List<MapObject> AllObjects = new List<MapObject>();
         public readonly List<LightSource> LightSources = new List<LightSource>();
+
+        public readonly Color NightColor;
+        public readonly bool IsInside;
 
         public TiledMapTileLayer this[string name] {
             get { return this.Tiles.GetLayer<TiledMapTileLayer>(name); }
@@ -43,6 +42,9 @@ namespace TownRPG.Maps {
             this.Tiles = tiles;
             this.Name = tiles.Name.Substring(tiles.Name.LastIndexOf('/') + 1);
             this.Scale = (tiles.TileWidth + tiles.TileHeight) / 2;
+
+            this.IsInside = this.Tiles.Properties.ContainsKey("Inside") && bool.Parse(this.Tiles.Properties["Inside"]);
+            this.NightColor = !this.IsInside ? new Color(220, 220, 150) : new Color(150, 150, 120);
 
             var objects = tiles.GetLayer<TiledMapObjectLayer>("StaticObjects");
             if (objects != null) {

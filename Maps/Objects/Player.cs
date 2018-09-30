@@ -47,5 +47,13 @@ namespace TownRPG.Maps.Objects {
             base.Update(time);
         }
 
+        public override void Teleport(Map newMap, Point pos) {
+            base.Teleport(newMap, pos);
+
+            var game = GameImpl.Instance;
+            game.Camera.FixPosition();
+            game.UpdateLighting();
+        }
+
     }
 }

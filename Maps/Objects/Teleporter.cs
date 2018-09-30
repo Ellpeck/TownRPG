@@ -53,7 +53,6 @@ namespace TownRPG.Maps.Objects {
             var game = GameImpl.Instance;
             game.Fade(true, 0.03F, () => {
                 player.Teleport(game.Maps[this.destination], this.destCoords);
-                game.Camera.FixPosition();
                 game.Fade(true, -0.03F);
             });
         }

@@ -88,6 +88,7 @@ namespace TownRPG.Main {
             this.NormalFont = this.Content.Load<SpriteFont>("Interfaces/NormalFont");
 
             this.AddMap(new Map(this.Content.Load<TiledMap>("Maps/Town/Town1")));
+            this.AddMap(new Map(this.Content.Load<TiledMap>("Maps/Town/Inside/BlueHouse")));
 
             this.Player = new Player(this.Maps["Town1"], new Vector2(200, 400));
             this.CurrentMap.AddObject(this.Player);
@@ -105,36 +106,7 @@ namespace TownRPG.Main {
 
                 if (this.CurrentMap != null) {
                     this.CurrentTime.Update(gameTime);
-
-                    var nightColor = new Color(220, 220, 150);
-                    const int eveningTime = 18;
-                    const int nightTime = 23;
-                    const int morningTime = 5;
-                    const int dayTime = 10;
-
-                    var hours = this.CurrentTime.TotalMinutes / 60 % 24;
-                    if (hours >= nightTime || hours < morningTime) {
-                        // night
-                        this.LightsModifier = 1;
-                        this.DaylightModifier = nightColor;
-                    } else if (hours >= eveningTime) {
-                        // evening
-                        this.LightsModifier = (hours - eveningTime) / (nightTime - eveningTime);
-                        this.DaylightModifier = nightColor * this.LightsModifier;
-                    } else if (hours >= dayTime) {
-                        // day
-                        this.LightsModifier = 0;
-                        this.DaylightModifier = Color.Black;
-                    } else if (hours >= morningTime) {
-                        // morning
-                        var rednessMod = (hours - morningTime) / (dayTime - morningTime);
-                        this.LightsModifier = 1 - rednessMod;
-                        this.DaylightModifier = new Color(
-                                                    nightColor.R - (int) (30 * rednessMod),
-                                                    nightColor.G - (int) (20 * rednessMod),
-                                                    nightColor.B + (int) (100 * rednessMod))
-                                                * this.LightsModifier;
-                    }
+                    this.UpdateLighting();
 
                     this.MapRenderer.Update(this.CurrentMap.Tiles, gameTime);
                 }
@@ -281,6 +253,42 @@ namespace TownRPG.Main {
             if (inter != null) {
                 inter.InitPositions(this.GraphicsDevice.Viewport);
                 inter.OnOpen();
+            }
+        }
+
+        public void UpdateLighting() {
+            const int eveningTime = 18;
+            const int nightTime = 23;
+            const int morningTime = 5;
+            const int dayTime = 10;
+
+            var nightColor = this.CurrentMap.NightColor;
+            var hours = this.CurrentTime.TotalMinutes / 60 % 24;
+            if (hours >= nightTime || hours < morningTime) {
+                // night
+                this.LightsModifier = 1;
+                this.DaylightModifier = nightColor;
+            } else if (hours >= eveningTime) {
+                // evening
+                this.LightsModifier = (hours - eveningTime) / (nightTime - eveningTime);
+                this.DaylightModifier = nightColor * this.LightsModifier;
+            } else if (hours >= dayTime) {
+                // day
+                this.LightsModifier = 0;
+                this.DaylightModifier = Color.Black;
+            } else if (hours >= morningTime) {
+                // morning
+                var rednessMod = (hours - morningTime) / (dayTime - morningTime);
+                this.LightsModifier = 1 - rednessMod;
+                if (!this.CurrentMap.IsInside) {
+                    this.DaylightModifier = new Color(
+                                                nightColor.R - (int) (30 * rednessMod),
+                                                nightColor.G - (int) (20 * rednessMod),
+                                                nightColor.B + (int) (100 * rednessMod))
+                                            * this.LightsModifier;
+                } else {
+                    this.DaylightModifier = nightColor * this.LightsModifier;
+                }
             }
         }
 

@@ -90,8 +90,9 @@
     <Content Include="Content\Interfaces\NormalFont.spritefont" />
     <Content Include="Content\Maps\OutsideTiles.png" />
     <Content Include="Content\Maps\OutsideTiles.tsx" />
-    <Content Include="Content\Maps\Town\InsideTiles.png" />
-    <Content Include="Content\Maps\Town\InsideTiles.tsx" />
+    <Content Include="Content\Maps\Town\Inside\BlueHouse.tmx" />
+    <Content Include="Content\Maps\Town\Inside\InsideTiles.png" />
+    <Content Include="Content\Maps\Town\Inside\InsideTiles.tsx" />
     <Content Include="Content\Maps\Town\Town1.tmx" />
     <Content Include="Content\Maps\Town\TownTiles.png" />
     <Content Include="Content\Maps\Town\TownTiles.tsx" />

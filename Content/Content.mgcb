@@ -62,18 +62,6 @@
 /processorParam:TextureFormat=Color
 /build:Interfaces/Cursors.png
 
-#begin Maps/Town/InsideTiles.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Maps/Town/InsideTiles.png
-
 #begin Maps/Town/Town1.tmx
 /importer:TiledMapImporter
 /processor:TiledMapProcessor
@@ -150,4 +138,21 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Objects/Light/Window.png
+
+#begin Maps/Town/Inside/BlueHouse.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:Maps/Town/Inside/BlueHouse.tmx
+
+#begin Maps/Town/Inside/InsideTiles.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/Town/Inside/InsideTiles.png
 
