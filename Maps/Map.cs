@@ -68,7 +68,7 @@ namespace TownRPG.Maps {
                         if (tile.HasValue && !tile.Value.IsBlank) {
                             var props = this.GetTileProperties(tile.Value, "LightColor", "LightRadius", "LightType");
                             if (props[0] != null && props[1] != null) {
-                                var size = float.Parse(props[1]) * 2F;
+                                var size = float.Parse(props[1], NumberFormatInfo.InvariantInfo) * 2F;
                                 this.LightSources.Add(new LightSource(
                                     new Vector2(x + 0.5F, y + 0.5F) * this.Scale,
                                     new Size2(size, size) * this.Scale,
