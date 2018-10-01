@@ -156,3 +156,8 @@
 /processorParam:TextureFormat=Color
 /build:Maps/Town/Inside/InsideTiles.png
 
+#begin Locale/En/Interface.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:Locale/En/Interface.xml
+

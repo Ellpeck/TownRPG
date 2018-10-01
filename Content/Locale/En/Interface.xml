@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<XnaContent>
+    <Asset Type="System.Collections.Generic.Dictionary[System.String, System.String]">
+        <Item>
+            <Key>Day</Key>
+            <Value>Day {0}</Value>
+        </Item>
+    </Asset>
+</XnaContent>

@@ -13,6 +13,7 @@ namespace TownRPG.Interfaces {
         private readonly string message;
         private Rectangle rect;
         private string splitMessage;
+        private int lastCharacterDirection;
 
         private float characterCount;
         private float fade;
@@ -74,6 +75,7 @@ namespace TownRPG.Interfaces {
 
         public override void OnOpen() {
             if (this.character != null) {
+                this.lastCharacterDirection = this.character.Direction;
                 this.character.AllowWalking = false;
 
                 var player = GameImpl.Instance.Player;
@@ -84,6 +86,7 @@ namespace TownRPG.Interfaces {
 
         public override void OnClose() {
             if (this.character != null) {
+                this.character.StopAndFace(this.lastCharacterDirection);
                 this.character.AllowWalking = true;
             }
         }

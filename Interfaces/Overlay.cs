@@ -17,7 +17,7 @@ namespace TownRPG.Interfaces {
             var game = GameImpl.Instance;
             batch.DrawDynamicArea(this.timeArea, Texture, new Rectangle(12, 0, 4, 4), Color.White);
             batch.DrawCenteredString(game.NormalFont,
-                "Day " + (game.CurrentTime.Day + 1),
+                string.Format(Locale.GetInterface("Day"), game.CurrentTime.Day + 1),
                 this.timeArea.Location.ToVector2() + new Vector2(this.timeArea.Width / 2F, 5),
                 true, false, Color.White, 0.25F);
             batch.DrawCenteredString(game.NormalFont,

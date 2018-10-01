@@ -72,6 +72,7 @@
     <Compile Include="Main\Camera.cs" />
     <Compile Include="Main\Cutscene.cs" />
     <Compile Include="Main\GameImpl.cs" />
+    <Compile Include="Main\Locale.cs" />
     <Compile Include="Main\Util.cs" />
     <Compile Include="Main\Startup.cs" />
     <Compile Include="Maps\Map.cs" />
@@ -88,6 +89,7 @@
     <Content Include="Content\Interfaces\Cursors.png" />
     <Content Include="Content\Interfaces\Interface.png" />
     <Content Include="Content\Interfaces\NormalFont.spritefont" />
+    <Content Include="Content\Locale\En\Interface.xml" />
     <Content Include="Content\Maps\OutsideTiles.png" />
     <Content Include="Content\Maps\OutsideTiles.tsx" />
     <Content Include="Content\Maps\Town\Inside\BlueHouse.tmx" />
