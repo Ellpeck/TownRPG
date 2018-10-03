@@ -6,13 +6,13 @@ namespace TownRPG.Main {
 
         public Vector2 Position;
         public float Scale;
-        public MapObject FollowedObject;
+        public DynamicObject FollowedObject;
 
         public Vector2? PanToPosition;
         public OnPositionReached PanCallback;
         public float PanSpeed;
 
-        public Camera(MapObject followedObject) {
+        public Camera(DynamicObject followedObject) {
             this.FollowedObject = followedObject;
         }
 

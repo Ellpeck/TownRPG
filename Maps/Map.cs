@@ -14,9 +14,8 @@ namespace TownRPG.Maps {
         public readonly int Scale;
         public readonly string Name;
 
-        public readonly List<MapObject> DynamicObjects = new List<MapObject>();
-        public readonly Dictionary<Vector2, MapObject> StaticObjects = new Dictionary<Vector2, MapObject>();
-        public readonly List<MapObject> AllObjects = new List<MapObject>();
+        public readonly List<DynamicObject> DynamicObjects = new List<DynamicObject>();
+        public readonly Dictionary<Point, StaticObject> StaticObjects = new Dictionary<Point, StaticObject>();
         public readonly List<LightSource> LightSources = new List<LightSource>();
 
         public readonly Color NightColor;
@@ -49,12 +48,10 @@ namespace TownRPG.Maps {
             var objects = tiles.GetLayer<TiledMapObjectLayer>("StaticObjects");
             if (objects != null) {
                 foreach (var obj in objects.Objects) {
+                    var mapPos = (obj.Position / this.Scale).ToPoint();
                     switch (obj.Type) {
-                        case "Bush":
-                            this.AddObject(new StaticObject(this, obj.Position, 0, obj.Name));
-                            break;
                         case "Teleporter":
-                            this.AddObject(new Teleporter(this, obj.Position, obj.Size,
+                            this.StaticObjects.Add(mapPos, new Teleporter(this, mapPos, obj.Size,
                                 obj.Properties["Destination"],
                                 new Point(int.Parse(obj.Properties["DestX"]), int.Parse(obj.Properties["DestY"])),
                                 obj.Properties.ContainsKey("Interaction") && bool.Parse(obj.Properties["Interaction"])));
@@ -81,24 +78,6 @@ namespace TownRPG.Maps {
                     }
                 }
             }
-        }
-
-        public void AddObject(MapObject obj) {
-            if (obj.IsStatic()) {
-                this.StaticObjects.Add(obj.Position, obj);
-            } else {
-                this.DynamicObjects.Add(obj);
-            }
-            this.AllObjects.Add(obj);
-        }
-
-        public void RemoveObject(MapObject obj) {
-            if (obj.IsStatic()) {
-                this.StaticObjects.Remove(obj.Position);
-            } else {
-                this.DynamicObjects.Remove(obj);
-            }
-            this.AllObjects.Remove(obj);
         }
 
         public string[] GetTileProperties(TiledMapTile tile, params string[] names) {
@@ -134,7 +113,7 @@ namespace TownRPG.Maps {
             batch.End();
 
             batch.Begin(SpriteSortMode.FrontToBack, null, SamplerState.PointClamp, null, null, null, viewMatrix);
-            foreach (var obj in this.AllObjects) {
+            foreach (var obj in this.DynamicObjects) {
                 obj.Draw(batch);
             }
             batch.End();

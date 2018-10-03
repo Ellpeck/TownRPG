@@ -39,7 +39,7 @@ namespace TownRPG.Maps.Objects {
 
             foreach (var obj in this.Map.StaticObjects.Values) {
                 var tele = obj as Teleporter;
-                if (tele != null && this.Intersects(tele.Position, tele.Size)) {
+                if (tele != null && this.Position.Intersects(this.Size, tele.MapPosition, tele.Size)) {
                     tele.OnPlayerIntersection(this);
                 }
             }

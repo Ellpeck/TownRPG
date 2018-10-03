@@ -77,8 +77,8 @@
     <Compile Include="Main\Startup.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\Objects\Character.cs" />
+    <Compile Include="Maps\Objects\DynamicObject.cs" />
     <Compile Include="Maps\Objects\LightSource.cs" />
-    <Compile Include="Maps\Objects\MapObject.cs" />
     <Compile Include="Maps\Objects\Player.cs" />
     <Compile Include="Maps\Objects\StaticObject.cs" />
     <Compile Include="Maps\Objects\Teleporter.cs" />

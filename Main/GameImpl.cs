@@ -91,7 +91,7 @@ namespace TownRPG.Main {
             this.AddMap(new Map(this.Content.Load<TiledMap>("Maps/Town/Inside/BlueHouse")));
 
             this.Player = new Player(this.Maps["Town1"], new Vector2(200, 400));
-            this.CurrentMap.AddObject(this.Player);
+            this.CurrentMap.DynamicObjects.Add(this.Player);
 
             this.Camera = new Camera(this.Player) {Scale = 4.5F};
             this.Camera.FixPosition();
@@ -104,7 +104,7 @@ namespace TownRPG.Main {
                 tess.StopAndFace(2);
                 tess.DialogOptions.Enqueue(new DialogMessage("I really enjoy the river. It's nice and calm."));
             });
-            tess.Map.AddObject(tess);
+            tess.Map.DynamicObjects.Add(tess);
         }
 
         protected override void Update(GameTime gameTime) {
@@ -165,7 +165,12 @@ namespace TownRPG.Main {
                 }
 
                 var world = this.Camera.ToWorldPos(state.Position.ToVector2());
-                foreach (var obj in this.CurrentMap.AllObjects) {
+                foreach (var obj in this.CurrentMap.StaticObjects.Values) {
+                    if (obj.OnMouse(world, type)) {
+                        return;
+                    }
+                }
+                foreach (var obj in this.CurrentMap.DynamicObjects) {
                     if (obj.OnMouse(world, type)) {
                         return;
                     }

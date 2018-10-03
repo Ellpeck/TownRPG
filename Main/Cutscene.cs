@@ -82,13 +82,13 @@ namespace TownRPG.Main {
 
     public class CameraObject : CutsceneInstruction {
 
-        private readonly MapObject obj;
+        private readonly DynamicObject obj;
         private readonly float speed;
         private readonly bool waitForDone;
         private readonly bool snap;
         private bool done;
 
-        public CameraObject(MapObject obj, bool snap, bool waitForDone = false, float speed = 0) {
+        public CameraObject(DynamicObject obj, bool snap, bool waitForDone = false, float speed = 0) {
             this.obj = obj;
             this.speed = speed;
             this.snap = snap;
@@ -156,9 +156,9 @@ namespace TownRPG.Main {
 
         private readonly Character character;
         private readonly int direction;
-        private readonly MapObject other;
+        private readonly DynamicObject other;
 
-        public CharacterFace(Character character, int direction = -1, MapObject other = null) {
+        public CharacterFace(Character character, int direction = -1, DynamicObject other = null) {
             this.character = character;
             this.direction = direction;
             this.other = other;

@@ -10,7 +10,7 @@ using TownRPG.Interfaces;
 using TownRPG.Main;
 
 namespace TownRPG.Maps.Objects {
-    public class Character : MapObject {
+    public class Character : DynamicObject {
 
         protected readonly SpriteSheetAnimationFactory AnimationFactory;
         protected SpriteSheetAnimation CurrentAnimation;
@@ -43,10 +43,6 @@ namespace TownRPG.Maps.Objects {
             this.AnimationFactory.Add("Right", new SpriteSheetAnimationData(new[] {13, 14, 15}, isPingPong: true));
 
             this.CurrentAnimation = this.AnimationFactory.Create("StandingDown");
-        }
-
-        public override bool IsStatic() {
-            return false;
         }
 
         public bool PathfindTo(Point pos, OnPathEnded callback = null, float speed = 0.3F) {
@@ -125,7 +121,7 @@ namespace TownRPG.Maps.Objects {
             if (this.DialogOptions.Count <= 0) {
                 return false;
             }
-            if (!this.Intersects(posWorld, new Size2(1F, 1F), this.Position + this.InteractionArea.Position, this.InteractionArea.Size)) {
+            if (!(this.Position + this.InteractionArea.Position).Intersects(this.InteractionArea.Size, posWorld, new Size2(1F, 1F))) {
                 return false;
             }
             GameImpl.Instance.CurrentCursor = 2;
@@ -147,7 +143,7 @@ namespace TownRPG.Maps.Objects {
             this.Velocity = Vector2.Zero;
         }
 
-        public void StopAndFace(MapObject obj) {
+        public void StopAndFace(DynamicObject obj) {
             this.StopMoving();
             var diffX = obj.Position.X - this.Position.X;
             var diffY = obj.Position.Y - this.Position.Y;

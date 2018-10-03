@@ -19,7 +19,7 @@ namespace TownRPG.Main {
             new Point(0, -1)
         };
 
-        public static Stack<Point> FindPath(Map map, MapObject obj, Point start, Point goal, int maxTries) {
+        public static Stack<Point> FindPath(Map map, DynamicObject obj, Point start, Point goal, int maxTries) {
             var open = new HashSet<PathPoint>();
             var closed = new HashSet<PathPoint>();
             open.Add(new PathPoint(start, goal, null, 0));
@@ -216,6 +216,18 @@ namespace TownRPG.Main {
                     new Rectangle(centerT.Location, centerRemainder),
                     color);
             }
+        }
+
+
+        public static bool Intersects(this Vector2 myPos, Size2 mySize, Vector2 otherPos, Size2 otherSize) {
+            var width = mySize.Width / 2F;
+            var height = mySize.Height / 2F;
+            var otherWidth = otherSize.Width / 2F;
+            var otherHeight = otherSize.Height / 2F;
+            return myPos.X - width < otherPos.X + otherWidth
+                   && myPos.X + width > otherPos.X - otherWidth
+                   && myPos.Y - height < otherPos.Y + otherHeight
+                   && myPos.Y + height > otherPos.Y - otherHeight;
         }
 
     }
