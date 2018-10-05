@@ -327,7 +327,7 @@ namespace TownRPG.Main {
         }
 
         public int Hour {
-            get { return (int) this.TotalMinutes / 60; }
+            get { return (int) this.TotalMinutes / 60 % 24; }
         }
 
         public int Day {
@@ -340,9 +340,9 @@ namespace TownRPG.Main {
 
         public string TimeToString() {
             var amPm = this.Hour >= 12 ? " pm" : " am";
-            var hour = this.Hour == 0 ? 12 : this.Hour;
+            var hour = this.Hour >= 12 ? this.Hour - 12 : this.Hour;
             var minute = (this.Minute / 10 * 10).ToString("D2");
-            return hour + ":" + minute + amPm;
+            return (hour == 0 ? 12 : hour) + ":" + minute + amPm;
         }
 
     }
