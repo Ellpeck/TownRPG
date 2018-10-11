@@ -67,8 +67,11 @@
   <ItemGroup>
     <Compile Include="Interfaces\Interface.cs" />
     <Compile Include="Interfaces\InterfaceComponent.cs" />
+    <Compile Include="Interfaces\Inventory.cs" />
     <Compile Include="Interfaces\MessageBox.cs" />
     <Compile Include="Interfaces\Overlay.cs" />
+    <Compile Include="Interfaces\Slot.cs" />
+    <Compile Include="Items\Item.cs" />
     <Compile Include="Main\Camera.cs" />
     <Compile Include="Main\Cutscene.cs" />
     <Compile Include="Main\GameImpl.cs" />
@@ -88,6 +91,7 @@
     <Content Include="Content\Content.mgcb" />
     <Content Include="Content\Interfaces\Cursors.png" />
     <Content Include="Content\Interfaces\Interface.png" />
+    <Content Include="Content\Interfaces\Items.png" />
     <Content Include="Content\Interfaces\NormalFont.spritefont" />
     <Content Include="Content\Locale\En\Interface.xml" />
     <Content Include="Content\Maps\OutsideTiles.png" />

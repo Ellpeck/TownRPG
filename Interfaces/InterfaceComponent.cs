@@ -14,11 +14,11 @@ namespace TownRPG.Interfaces {
             this.Size = size;
         }
 
-        public void Update(GameTime time) {
+        public virtual void Update(GameTime time) {
 
         }
 
-        public void Draw(SpriteBatch batch) {
+        public virtual void Draw(SpriteBatch batch) {
 
         }
 

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using MonoGame.Extended.Collections;
 using MonoGame.Extended.TextureAtlases;
 using MonoGame.Extended.Tiled;
 using MonoGame.Extended.Tiled.Graphics;
@@ -28,6 +29,7 @@ namespace TownRPG.Main {
         private Texture2D cursorsTexture;
         private Point lastMousePos;
         private int lastClickType;
+        private Dictionary<string, Keybind> keybinds = new Dictionary<string, Keybind>();
 
         public readonly Dictionary<string, Map> Maps = new Dictionary<string, Map>();
         public Player Player;
@@ -105,6 +107,14 @@ namespace TownRPG.Main {
                 tess.DialogOptions.Enqueue(new DialogMessage("I really enjoy the river. It's nice and calm."));
             });
             tess.Map.DynamicObjects.Add(tess);
+
+            this.AddKeybind("Up", Keys.W);
+            this.AddKeybind("Left", Keys.A);
+            this.AddKeybind("Down", Keys.S);
+            this.AddKeybind("Right", Keys.D);
+            this.AddKeybind("Slow", Keys.LeftShift);
+            this.AddKeybind("Inventory", Keys.E);
+            this.AddKeybind("Escape", Keys.Escape);
         }
 
         protected override void Update(GameTime gameTime) {
@@ -131,7 +141,7 @@ namespace TownRPG.Main {
             if (this.CurrentCutscene != null) {
                 this.CurrentCutscene.Update(gameTime);
             }
-            this.DoMouseStuff();
+            this.DoInput();
 
             if (this.fadeSpeed != 0) {
                 this.fadePercentage += this.fadeSpeed;
@@ -146,25 +156,44 @@ namespace TownRPG.Main {
             base.Update(gameTime);
         }
 
-        private void DoMouseStuff() {
+        private void DoInput() {
             this.CurrentCursor = this.CurrentCutscene != null && this.CurrentInterface == null ? -1 : 0;
             this.CursorAlpha = 1;
 
-            var state = Mouse.GetState();
-            var type = state.LeftButton == ButtonState.Pressed ? 1 : state.RightButton == ButtonState.Pressed ? 2 : 0;
+            var mouse = Mouse.GetState();
+            var type = mouse.LeftButton == ButtonState.Pressed ? 1 : mouse.RightButton == ButtonState.Pressed ? 2 : 0;
             if (this.lastClickType != type) {
                 this.lastClickType = type;
                 type += 2;
             }
 
+            var keyUsed = false;
+            var keyboard = Keyboard.GetState();
+            foreach (var bind in this.keybinds.Values) {
+                if (keyboard.IsKeyDown(bind.Key)) {
+                    bind.Type = bind.Type == 0 ? 2 : 1;
+
+                    if (!keyUsed) {
+                        if (bind.Type == 2 && bind.Name == "Inventory" && !(this.CurrentInterface is Inventory)) {
+                            this.SetInterface(new Inventory(this.Player));
+                            keyUsed = true;
+                        } else if (this.CurrentInterface != null && this.CurrentInterface.OnKeyboard(bind.Name, bind.Type)) {
+                            keyUsed = true;
+                        }
+                    }
+                } else {
+                    bind.Type = 0;
+                }
+            }
+
             if (this.CurrentInterface != null) {
-                this.CurrentInterface.OnMouse(state.Position, type);
+                this.CurrentInterface.OnMouse(mouse.Position, type);
             } else {
-                if (this.CurrentCutscene == null && this.Overlay.OnMouse(state.Position, type)) {
+                if (this.CurrentCutscene == null && this.Overlay.OnMouse(mouse.Position, type)) {
                     return;
                 }
 
-                var world = this.Camera.ToWorldPos(state.Position.ToVector2());
+                var world = this.Camera.ToWorldPos(mouse.Position.ToVector2());
                 foreach (var obj in this.CurrentMap.StaticObjects.Values) {
                     if (obj.OnMouse(world, type)) {
                         return;
@@ -310,6 +339,14 @@ namespace TownRPG.Main {
             this.Maps.Add(map.Name, map);
         }
 
+        public void AddKeybind(string name, Keys value) {
+            this.keybinds.Add(name, new Keybind(name, value));
+        }
+
+        public int GetKeyType(string name) {
+            return this.keybinds[name].Type;
+        }
+
         public static T LoadContent<T>(string name) {
             return Instance.Content.Load<T>(name);
         }
@@ -343,6 +380,19 @@ namespace TownRPG.Main {
             var hour = this.Hour >= 12 ? this.Hour - 12 : this.Hour;
             var minute = (this.Minute / 10 * 10).ToString("D2");
             return (hour == 0 ? 12 : hour) + ":" + minute + amPm;
+        }
+
+    }
+
+    public class Keybind {
+
+        public readonly string Name;
+        public Keys Key;
+        public int Type;
+
+        public Keybind(string name, Keys key) {
+            this.Name = name;
+            this.Key = key;
         }
 
     }

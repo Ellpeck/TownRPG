@@ -32,6 +32,10 @@ namespace TownRPG.Interfaces {
             return false;
         }
 
+        public virtual bool OnKeyboard(string bind, int type) {
+            return false;
+        }
+
         public virtual bool Pauses() {
             return false;
         }

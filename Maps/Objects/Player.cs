@@ -3,31 +3,34 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using TownRPG.Interfaces;
+using TownRPG.Items;
 using TownRPG.Main;
 
 namespace TownRPG.Maps.Objects {
     public class Player : Character {
 
+        public readonly Item[] Inventory = new Item[24];
+
         public Player(Map map, Vector2 position) : base("Player", map, position) {
         }
 
         public override void Update(GameTime time) {
-            if (GameImpl.Instance.CurrentInterface == null && GameImpl.Instance.CurrentCutscene == null) {
-                var state = Keyboard.GetState();
-                var speed = state.IsKeyDown(Keys.LeftShift) ? 0.3F : 0.5F;
+            var game = GameImpl.Instance;
+            if (game.CurrentInterface == null && game.CurrentCutscene == null) {
+                var speed = game.GetKeyType("Slow") > 0 ? 0.3F : 0.5F;
                 var vel = new Vector2();
 
-                if (state.IsKeyDown(Keys.W)) {
+                if (game.GetKeyType("Up") > 0) {
                     vel.Y -= speed;
                 }
-                if (state.IsKeyDown(Keys.S)) {
+                if (game.GetKeyType("Down") > 0) {
                     vel.Y += speed;
                 }
 
-                if (state.IsKeyDown(Keys.A)) {
+                if (game.GetKeyType("Left") > 0) {
                     vel.X -= speed;
                 }
-                if (state.IsKeyDown(Keys.D)) {
+                if (game.GetKeyType("Right") > 0) {
                     vel.X += speed;
                 }
 
