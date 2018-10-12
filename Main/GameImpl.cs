@@ -187,9 +187,9 @@ namespace TownRPG.Main {
             }
 
             if (this.CurrentInterface != null) {
-                this.CurrentInterface.OnMouse(mouse.Position, type);
+                this.CurrentInterface.HandleMouse(mouse.Position, type);
             } else {
-                if (this.CurrentCutscene == null && this.Overlay.OnMouse(mouse.Position, type)) {
+                if (this.CurrentCutscene == null && this.Overlay.HandleMouse(mouse.Position, type)) {
                     return;
                 }
 
